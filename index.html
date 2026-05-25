@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRUZO — Power. Protected. Premium.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Tajawal:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --g: #7CFC8A;
+  --gd: #4CD95E;
+  --g2: #A8FFB4;
+  --glow: rgba(124,252,138,0.18);
+  --black: #080B09;
+  --dark: #0C110D;
+  --card: #111611;
+  --card2: #161D16;
+  --border: rgba(124,252,138,0.12);
+  --text: #E4F5E6;
+  --muted: #5A7A5D;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;
+  width:10px;height:10px;
+  background:var(--g);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,opacity 0.2s;
+  mix-blend-mode:difference;
+}
+.cursor-ring{
+  position:fixed;
+  width:36px;height:36px;
+  border:1.5px solid rgba(124,252,138,0.5);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.12s ease,width 0.25s,height 0.25s;
+}
+
+/* NAV */
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 5%;
+  background:rgba(8,11,9,0.7);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px;
+  letter-spacing:6px;
+  color:var(--text);
+  text-decoration:none;
+}
+.nav-logo span{color:var(--g);}
+
+.nav-links{
+  display:flex;
+  gap:32px;
+  list-style:none;
+}
+
+.nav-links a{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--muted);
+  text-decoration:none;
+  text-transform:uppercase;
+  transition:color 0.25s;
+}
+.nav-links a:hover{color:var(--g);}
+
+.nav-cta{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--black);
+  background:var(--g);
+  border:none;
+  padding:10px 20px;
+  border-radius:6px;
+  cursor:none;
+  text-transform:uppercase;
+  transition:background 0.25s,transform 0.2s;
+}
+.nav-cta:hover{background:var(--g2);transform:translateY(-1px);}
+
+/* HERO */
+#hero{
+  position:relative;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+#three-canvas{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  pointer-events:none;
+}
+
+.hero-badge{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:5px;
+  color:var(--g);
+  border:1px solid var(--border);
+  padding:6px 18px;
+  border-radius:20px;
+  opacity:0;
+  animation:fadeUp 0.8s ease 0.3s forwards;
+}
+
+.hero-logo-img{
+  width:clamp(80px,14vw,140px);
+  opacity:0;
+  animation:fadeUp 1s ease 0.5s forwards,logoGlow 3s ease-in-out 1.5s infinite;
+  filter:drop-shadow(0 0 30px rgba(124,252,138,0.5));
+}
+
+@keyframes logoGlow{
+  0%,100%{filter:drop-shadow(0 0 20px rgba(124,252,138,0.4));}
+  50%{filter:drop-shadow(0 0 50px rgba(124,252,138,0.9));}
+}
+
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(60px,14vw,130px);
+  letter-spacing:-2px;
+  line-height:0.9;
+  opacity:0;
+  animation:fadeUp 1s ease 0.7s forwards;
+}
+
+.hero-title .t{color:var(--g);}
+
+.hero-tagline{
+  font-family:'Space Mono',monospace;
+  font-size:clamp(10px,1.5vw,13px);
+  letter-spacing:6px;
+  color:var(--muted);
+  opacity:0;
+  animation:fadeUp 1s ease 0.9s forwards;
+}
+
+.hero-sub{
+  font-size:clamp(14px,2vw,18px);
+  font-weight:300;
+  color:rgba(228,245,230,0.7);
+  max-width:480px;
+  line-height:1.7;
+  opacity:0;
+  animation:fadeUp 1s ease 1.1s forwards;
+}
+
+.hero-btns{
+  display:flex;
+  gap:14px;
+  margin-top:8px;
+  opacity:0;
+  animation:fadeUp 1s ease 1.3s forwards;
+  pointer-events:all;
+}
+
+.btn-primary{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--black);
+  background:var(--g);
+  border:none;
+  padding:14px 28px;
+  border-radius:8px;
+  cursor:none;
+  text-transform:uppercase;
+  transition:all 0.25s;
+  text-decoration:none;
+}
+.btn-primary:hover{background:var(--g2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,252,138,0.3);}
+
+.btn-secondary{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--g);
+  background:transparent;
+  border:1px solid rgba(124,252,138,0.3);
+  padding:14px 28px;
+  border-radius:8px;
+  cursor:none;
+  text-transform:uppercase;
+  transition:all 0.25s;
+  text-decoration:none;
+}
+.btn-secondary:hover{border-color:var(--g);background:rgba(124,252,138,0.06);transform:translateY(-2px);}
+
+.hero-scroll{
+  position:absolute;
+  bottom:32px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  opacity:0;
+  animation:fadeUp 1s ease 1.8s forwards;
+}
+
+.scroll-line{
+  width:1px;
+  height:50px;
+  background:linear-gradient(180deg,var(--g),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse{
+  0%,100%{opacity:0.4;transform:scaleY(1);}
+  50%{opacity:1;transform:scaleY(1.2);}
+}
+
+.scroll-label{
+  font-family:'Space Mono',monospace;
+  font-size:8px;
+  letter-spacing:3px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* MARQUEE */
+.marquee-wrap{
+  background:var(--g);
+  padding:12px 0;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.marquee-track{
+  display:inline-flex;
+  animation:marquee 20s linear infinite;
+}
+
+.marquee-track span{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:4px;
+  color:var(--black);
+  padding:0 24px;
+}
+
+.marquee-track .dot{color:rgba(8,11,9,0.35);}
+
+@keyframes marquee{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+
+/* SECTIONS SHARED */
+section{padding:100px 5%;}
+
+.sec-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:5px;
+  color:var(--g);
+  text-transform:uppercase;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.sec-label::before{content:'';width:28px;height:1px;background:var(--g);}
+
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,6vw,64px);
+  letter-spacing:2px;
+  line-height:1;
+  margin-bottom:16px;
+}
+
+.sec-desc{
+  font-size:16px;
+  font-weight:300;
+  color:rgba(228,245,230,0.6);
+  max-width:500px;
+  line-height:1.8;
+  margin-bottom:56px;
+}
+
+/* ABOUT / TRUST */
+#about{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+
+.about-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:40px;
+}
+
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color 0.3s,transform 0.3s;
+}
+.stat-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--gd),var(--g));
+  transform:scaleX(0);
+  transition:transform 0.4s;
+  transform-origin:left;
+}
+.stat-card:hover{border-color:var(--g);transform:translateY(-3px);}
+.stat-card:hover::before{transform:scaleX(1);}
+
+.stat-val{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:42px;
+  color:var(--g);
+  line-height:1;
+  margin-bottom:4px;
+}
+.stat-key{font-size:13px;color:var(--muted);}
+
+.about-visual{
+  position:relative;
+  height:500px;
+}
+
+#about-canvas{width:100%;height:100%;border-radius:24px;overflow:hidden;}
+
+/* PRODUCTS */
+#products{background:var(--dark);}
+
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+
+.prod-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  transition:all 0.35s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  cursor:none;
+}
+.prod-card:hover{
+  border-color:var(--g);
+  transform:translateY(-6px);
+  box-shadow:0 20px 60px rgba(124,252,138,0.1);
+}
+
+.prod-card-visual{
+  height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  background:var(--card2);
+}
+
+.prod-card-visual::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(124,252,138,0.03) 25px),
+    repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(124,252,138,0.03) 25px);
+}
+
+.prod-icon-3d{
+  font-size:64px;
+  position:relative;
+  z-index:1;
+  transition:transform 0.4s cubic-bezier(.4,0,.2,1);
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+}
+.prod-card:hover .prod-icon-3d{transform:scale(1.15) translateY(-6px) rotate(-5deg);}
+
+.prod-badge{
+  position:absolute;
+  top:12px;right:12px;
+  background:rgba(124,252,138,0.1);
+  border:1px solid rgba(124,252,138,0.25);
+  border-radius:6px;
+  padding:4px 10px;
+  font-family:'Space Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--g);
+  z-index:1;
+}
+
+.prod-card-info{padding:22px 20px;}
+
+.prod-line{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--g);
+  margin-bottom:6px;
+  text-transform:uppercase;
+}
+.prod-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;
+  letter-spacing:2px;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.prod-desc{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:16px;
+}
+
+.prod-brands{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.brand-tag{
+  font-family:'Space Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--muted);
+  border:1px solid rgba(124,252,138,0.1);
+  padding:3px 8px;
+  border-radius:4px;
+  background:rgba(124,252,138,0.03);
+}
+
+.prod-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-top:1px solid var(--border);
+  padding-top:14px;
+}
+
+.prod-warranty{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--gd);
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.prod-btn{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--black);
+  background:var(--g);
+  border:none;
+  padding:8px 16px;
+  border-radius:6px;
+  cursor:none;
+  text-transform:uppercase;
+  transition:all 0.2s;
+}
+.prod-btn:hover{background:var(--g2);}
+
+/* WHY TRUZO */
+#why{
+  position:relative;
+  overflow:hidden;
+}
+
+#why::before{
+  content:'';
+  position:absolute;
+  top:50%;left:50%;
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(124,252,138,0.04) 0%,transparent 65%);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+.why-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+}
+
+.why-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:36px 28px;
+  position:relative;
+  overflow:hidden;
+  transition:all 0.35s;
+}
+
+.why-card:hover{
+  border-color:var(--g);
+  transform:translateY(-4px);
+}
+
+.why-card::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--g),transparent);
+  transform:scaleX(0);
+  transition:transform 0.4s;
+}
+.why-card:hover::after{transform:scaleX(1);}
+
+.why-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:72px;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(124,252,138,0.12);
+  line-height:1;
+  position:absolute;
+  top:16px;right:20px;
+}
+
+.why-icon{font-size:32px;margin-bottom:18px;display:block;}
+
+.why-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px;
+  letter-spacing:2px;
+  color:var(--text);
+  margin-bottom:10px;
+}
+
+.why-desc{
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.8;
+}
+
+/* BRANDS */
+#brands{background:var(--dark);text-align:center;}
+
+.brands-grid{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:14px;
+  max-width:700px;
+  margin:0 auto;
+}
+
+.brand-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 28px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:4px;
+  color:var(--muted);
+  transition:all 0.3s;
+  cursor:none;
+}
+.brand-card:hover{
+  color:var(--g);
+  border-color:var(--g);
+  background:rgba(124,252,138,0.04);
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(124,252,138,0.08);
+}
+
+/* CONTACT / CTA */
+#cta{
+  text-align:center;
+  padding:120px 5%;
+  position:relative;
+  overflow:hidden;
+}
+
+#cta::before{
+  content:'';
+  position:absolute;
+  top:50%;left:50%;
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(124,252,138,0.06) 0%,transparent 60%);
+  transform:translate(-50%,-50%);
+}
+
+.cta-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,9vw,100px);
+  letter-spacing:2px;
+  line-height:1;
+  margin-bottom:20px;
+  position:relative;
+  z-index:1;
+}
+
+.cta-title .line2{color:var(--g);}
+
+.cta-desc{
+  font-size:16px;
+  font-weight:300;
+  color:rgba(228,245,230,0.6);
+  max-width:400px;
+  margin:0 auto 40px;
+  line-height:1.8;
+  position:relative;z-index:1;
+}
+
+.cta-btns{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+
+.contact-row{
+  display:flex;
+  justify-content:center;
+  gap:28px;
+  margin-top:48px;
+  flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+
+.contact-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+.contact-icon{font-size:22px;}
+.contact-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.contact-val{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:32px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+}
+
+.footer-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:5px;
+  color:var(--muted);
+}
+.footer-logo span{color:var(--g);}
+
+.footer-copy{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--muted);
+}
+
+/* REVEAL ANIMATION */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* DIVIDER */
+.divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--g),transparent);
+  opacity:0.1;
+  margin:0;
+}
+
+@media(max-width:768px){
+  nav .nav-links{display:none;}
+  #about{grid-template-columns:1fr;}
+  .about-visual{height:260px;}
+  body{cursor:auto;}
+  .cursor,.cursor-ring{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo"><span>T</span>RUZO</a>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <li><a href="#why">Why TRUZO</a></li>
+    <li><a href="#brands">Brands</a></li>
+    <li><a href="#cta">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">TRUSTED ORIGINAL RESELLER</div>
+    <svg class="hero-logo-img" viewBox="0 0 200 200" fill="none">
+      <rect x="20" y="35" width="160" height="42" rx="10" fill="#7CFC8A"/>
+      <rect x="78" y="77" width="44" height="100" rx="10" fill="#7CFC8A"/>
+      <rect x="20" y="35" width="42" height="42" rx="10" fill="#4CD95E"/>
+      <rect x="138" y="35" width="42" height="42" rx="10" fill="#4CD95E"/>
+    </svg>
+    <div class="hero-title"><span class="t">T</span>RUZO</div>
+    <div class="hero-tagline">POWER · PROTECTED · PREMIUM</div>
+    <div class="hero-sub">أكسسوارات موبايل أصلية 100% — من Anker, Samsung, OPPO وأكتر. اشتري بأمان، ضمان حقيقي.</div>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Shop Now</a>
+      <a href="#why" class="btn-secondary">Why TRUZO?</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>100% ORIGINAL</span><span class="dot">·</span>
+    <span>ANKER</span><span class="dot">·</span>
+    <span>SAMSUNG</span><span class="dot">·</span>
+    <span>OPPO</span><span class="dot">·</span>
+    <span>REDMI</span><span class="dot">·</span>
+    <span>TRUSTED RESELLER</span><span class="dot">·</span>
+    <span>12M WARRANTY</span><span class="dot">·</span>
+    <span>CERTIFIED</span><span class="dot">·</span>
+    <span>100% ORIGINAL</span><span class="dot">·</span>
+    <span>ANKER</span><span class="dot">·</span>
+    <span>SAMSUNG</span><span class="dot">·</span>
+    <span>OPPO</span><span class="dot">·</span>
+    <span>REDMI</span><span class="dot">·</span>
+    <span>TRUSTED RESELLER</span><span class="dot">·</span>
+    <span>12M WARRANTY</span><span class="dot">·</span>
+    <span>CERTIFIED</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <div class="sec-label">About TRUZO</div>
+    <div class="sec-title">الأصلي مش<br>بس كلام</div>
+    <div class="sec-desc">TRUZO مش بيبيع — TRUZO بيضمن. كل منتج بيجي بشهادة أصالة، ضمان حقيقي، وخدمة بعد البيع. خلصنا من عصر المنتجات المغشوشة.</div>
+    <div class="about-stats">
+      <div class="stat-card reveal">
+        <div class="stat-val">100%</div>
+        <div class="stat-key">Original Guaranteed</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val">12M</div>
+        <div class="stat-key">Full Warranty</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val">6+</div>
+        <div class="stat-key">Premium Brands</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val">24H</div>
+        <div class="stat-key">Support Response</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-visual reveal">
+    <canvas id="about-canvas"></canvas>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="reveal">
+    <div class="sec-label">Products</div>
+    <div class="sec-title">منتجاتنا</div>
+    <div class="sec-desc">كل منتج أصلي 100% — اختار بثقة.</div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div id="filterBar" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;"></div>
+
+  <!-- DYNAMIC GRID -->
+  <div class="products-grid" id="dynamicProductsGrid">
+    <!-- filled by JS -->
+  </div>
+
+  <!-- EMPTY STATE (shown when no products in admin yet) -->
+  <div id="noProductsState" style="display:none;text-align:center;padding:80px 20px;color:var(--muted);">
+    <div style="font-size:56px;margin-bottom:16px;">📦</div>
+    <div style="font-size:18px;color:var(--text);margin-bottom:8px;">المنتجات قريباً</div>
+    <div style="font-size:14px;">ابقى زورنا تاني</div>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div id="prodModal" style="display:none;position:fixed;inset:0;background:rgba(8,11,9,0.92);backdrop-filter:blur(12px);z-index:500;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:24px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;position:relative;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gd),var(--g),var(--g2));border-radius:24px 24px 0 0;"></div>
+      <div style="padding:28px;" id="prodModalContent"></div>
+    </div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY TRUZO -->
+<section id="why">
+  <div style="text-align:center;margin-bottom:56px;" class="reveal">
+    <div class="sec-label" style="justify-content:center;">Why TRUZO</div>
+    <div class="sec-title">ليه TRUZO؟</div>
+    <div class="sec-desc" style="margin:0 auto;">لأن الفرق بين الأصلي والمقلد مش بس في الجودة — في الأمان والبطارية وعمر جهازك.</div>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-num">01</div>
+      <span class="why-icon">✅</span>
+      <div class="why-title">Verified Original</div>
+      <div class="why-desc">كل منتج بيمر بتحقق قبل ما يوصلك. مش كلام — فحص حقيقي.</div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-num">02</div>
+      <span class="why-icon">🛡️</span>
+      <div class="why-title">Real Warranty</div>
+      <div class="why-desc">ضمان TRUZO — مش وعد فاضي. حاجة اتكسرت؟ هنصلحها أو نبدلها.</div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-num">03</div>
+      <span class="why-icon">⚡</span>
+      <div class="why-title">Safe for Your Device</div>
+      <div class="why-desc">المقلد بيخرب شاشتك وبطاريتك. الأصلي بيحميهم. الفرق في السعر مش يساوي.</div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-num">04</div>
+      <span class="why-icon">💬</span>
+      <div class="why-title">After-Sale Support</div>
+      <div class="why-desc">مش بنختفي بعد البيع. فريق دعم متاح يرد عليك خلال 24 ساعة.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<section id="brands">
+  <div class="reveal">
+    <div class="sec-label" style="justify-content:center;">Official Brands</div>
+    <div class="sec-title" style="text-align:center;">الماركات اللي بنبيعها</div>
+    <div class="sec-desc" style="margin:0 auto 40px;text-align:center;">بنبيع منتجات أصلية من أكبر الماركات العالمية — بس الحقيقي.</div>
+  </div>
+  <div class="brands-grid reveal">
+    <div class="brand-card">ANKER</div>
+    <div class="brand-card">SAMSUNG</div>
+    <div class="brand-card">OPPO</div>
+    <div class="brand-card">REDMI</div>
+    <div class="brand-card">XIAOMI</div>
+    <div class="brand-card">BASEUS</div>
+    <div class="brand-card">UGREEN</div>
+    <div class="brand-card">APPLE</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-title reveal">
+    <div>اشتري بأمان.</div>
+    <div class="line2">اشتري TRUZO.</div>
+  </div>
+  <div class="cta-desc reveal">تعبت من المنتجات المغشوشة؟ خلص — TRUZO موجود عشان كده بالظبط.</div>
+  <div class="cta-btns reveal">
+    <a href="#products" class="btn-primary">تسوق دلوقتي</a>
+    <a href="#" class="btn-secondary">واتساب</a>
+  </div>
+  <div class="contact-row reveal">
+    <div class="contact-item">
+      <span class="contact-icon">📱</span>
+      <span class="contact-label">WhatsApp</span>
+      <span class="contact-val">@truzo</span>
+    </div>
+    <div class="contact-item">
+      <span class="contact-icon">📸</span>
+      <span class="contact-label">Instagram</span>
+      <span class="contact-val">@truzo.eg</span>
+    </div>
+    <div class="contact-item">
+      <span class="contact-icon">🎵</span>
+      <span class="contact-label">TikTok</span>
+      <span class="contact-val">@truzo</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>T</span>RUZO</div>
+  <div class="footer-copy">© 2025 TRUZO · POWER · PROTECTED · PREMIUM</div>
+  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);">100% ORIGINAL GUARANTEED</div>
+</footer>
+
+<script>
+// ========================
+// CUSTOM CURSOR
+// ========================
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px';
+  cursor.style.top=my+'px';
+});
+
+(function animRing(){
+  rx+=(mx-rx)*0.12;
+  ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px';
+  ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+document.querySelectorAll('button,a,.prod-card,.brand-card,.why-card,.stat-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.width='18px';cursor.style.height='18px';
+    ring.style.width='56px';ring.style.height='56px';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.width='10px';cursor.style.height='10px';
+    ring.style.width='36px';ring.style.height='36px';
+  });
+});
+
+// ========================
+// THREE.JS HERO
+// ========================
+(function initHero(){
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000);
+  camera.position.z = 30;
+
+  // Floating particles
+  const geo = new THREE.BufferGeometry();
+  const count = 1200;
+  const pos = new Float32Array(count*3);
+  const sizes = new Float32Array(count);
+
+  for(let i=0;i<count;i++){
+    pos[i*3]   = (Math.random()-0.5)*80;
+    pos[i*3+1] = (Math.random()-0.5)*80;
+    pos[i*3+2] = (Math.random()-0.5)*60;
+    sizes[i] = Math.random()*2.5+0.5;
+  }
+
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('size',new THREE.BufferAttribute(sizes,1));
+
+  const mat = new THREE.PointsMaterial({
+    color:0x7CFC8A,
+    size:0.18,
+    transparent:true,
+    opacity:0.55,
+    sizeAttenuation:true
+  });
+
+  const particles = new THREE.Points(geo,mat);
+  scene.add(particles);
+
+  // Floating T shapes
+  const tGeo = new THREE.BoxGeometry(3,0.8,0.3);
+  const tMat = new THREE.MeshStandardMaterial({
+    color:0x7CFC8A,
+    emissive:0x4CD95E,
+    emissiveIntensity:0.3,
+    transparent:true,
+    opacity:0.15,
+    wireframe:true
+  });
+
+  const floaters = [];
+  for(let i=0;i<6;i++){
+    const mesh = new THREE.Mesh(tGeo,tMat);
+    mesh.position.set(
+      (Math.random()-0.5)*40,
+      (Math.random()-0.5)*30,
+      (Math.random()-0.5)*20-5
+    );
+    mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
+    mesh.userData = {
+      rx:Math.random()*0.005,
+      ry:Math.random()*0.005,
+      rz:Math.random()*0.003,
+      fy:Math.random()*0.003+0.001,
+      oy:mesh.position.y
+    };
+    scene.add(mesh);
+    floaters.push(mesh);
+  }
+
+  // Ambient + point lights
+  scene.add(new THREE.AmbientLight(0x7CFC8A,0.3));
+  const pLight = new THREE.PointLight(0x7CFC8A,1.5,50);
+  pLight.position.set(0,0,10);
+  scene.add(pLight);
+
+  // Mouse parallax
+  let tmx=0,tmy=0;
+  document.addEventListener('mousemove',e=>{
+    tmx=(e.clientX/window.innerWidth-0.5)*2;
+    tmy=-(e.clientY/window.innerHeight-0.5)*2;
+  });
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=0.008;
+
+    particles.rotation.y = t*0.04;
+    particles.rotation.x = t*0.02;
+
+    camera.position.x += (tmx*3 - camera.position.x)*0.03;
+    camera.position.y += (tmy*3 - camera.position.y)*0.03;
+    camera.lookAt(scene.position);
+
+    floaters.forEach(f=>{
+      f.rotation.x+=f.userData.rx;
+      f.rotation.y+=f.userData.ry;
+      f.position.y = f.userData.oy + Math.sin(t+f.userData.oy)*2;
+    });
+
+    pLight.intensity = 1.2+Math.sin(t*1.5)*0.4;
+
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  window.addEventListener('resize',()=>{
+    camera.aspect=window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
+  });
+})();
+
+// ========================
+// ABOUT CANVAS — Rotating T
+// ========================
+(function initAbout(){
+  const canvas = document.getElementById('about-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const w=canvas.parentElement.offsetWidth||400;
+  const h=canvas.parentElement.offsetHeight||500;
+  renderer.setSize(w,h);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45,w/h,0.1,100);
+  camera.position.z=8;
+
+  // Build T from two boxes
+  const mat = new THREE.MeshStandardMaterial({
+    color:0x7CFC8A,
+    emissive:0x4CD95E,
+    emissiveIntensity:0.4,
+    metalness:0.5,
+    roughness:0.3
+  });
+
+  const group = new THREE.Group();
+
+  // Top bar
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(3.2,0.75,0.5),mat);
+  bar.position.y=0.9;
+  group.add(bar);
+
+  // Stem
+  const stem = new THREE.Mesh(new THREE.BoxGeometry(0.85,2,0.5),mat);
+  stem.position.y=-0.4;
+  group.add(stem);
+
+  // Corner blocks
+  const cMat = new THREE.MeshStandardMaterial({
+    color:0x4CD95E,
+    emissive:0x2DB83D,
+    emissiveIntensity:0.5,
+    metalness:0.6,
+    roughness:0.2
+  });
+
+  const cl = new THREE.Mesh(new THREE.BoxGeometry(0.75,0.75,0.55),cMat);
+  cl.position.set(-1.23,0.9,0);
+  group.add(cl);
+
+  const cr = new THREE.Mesh(new THREE.BoxGeometry(0.75,0.75,0.55),cMat);
+  cr.position.set(1.23,0.9,0);
+  group.add(cr);
+
+  scene.add(group);
+
+  // Wireframe ring
+  const ringGeo = new THREE.TorusGeometry(2.8,0.02,8,80);
+  const ringMat = new THREE.MeshBasicMaterial({color:0x7CFC8A,transparent:true,opacity:0.2});
+  const torus = new THREE.Mesh(ringGeo,ringMat);
+  scene.add(torus);
+
+  const torus2 = new THREE.Mesh(
+    new THREE.TorusGeometry(3.4,0.015,8,80),
+    new THREE.MeshBasicMaterial({color:0x4CD95E,transparent:true,opacity:0.1})
+  );
+  scene.add(torus2);
+
+  // Floating dots
+  const dotGeo = new THREE.BufferGeometry();
+  const dpos = new Float32Array(300*3);
+  for(let i=0;i<300;i++){
+    const theta=Math.random()*Math.PI*2;
+    const r=2.5+Math.random()*2;
+    dpos[i*3]=Math.cos(theta)*r;
+    dpos[i*3+1]=(Math.random()-0.5)*5;
+    dpos[i*3+2]=Math.sin(theta)*r;
+  }
+  dotGeo.setAttribute('position',new THREE.BufferAttribute(dpos,3));
+  const dotMat = new THREE.PointsMaterial({color:0x7CFC8A,size:0.05,transparent:true,opacity:0.5});
+  scene.add(new THREE.Points(dotGeo,dotMat));
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff,0.4));
+  const pl=new THREE.PointLight(0x7CFC8A,3,20);
+  pl.position.set(3,3,5);
+  scene.add(pl);
+  const pl2=new THREE.PointLight(0x4CD95E,2,20);
+  pl2.position.set(-3,-3,3);
+  scene.add(pl2);
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=0.01;
+    group.rotation.y=t*0.6;
+    group.rotation.x=Math.sin(t*0.4)*0.2;
+    group.position.y=Math.sin(t*0.7)*0.15;
+    torus.rotation.x=t*0.3;
+    torus.rotation.z=t*0.2;
+    torus2.rotation.y=t*0.25;
+    torus2.rotation.x=t*0.15;
+    pl.intensity=2.5+Math.sin(t*1.2)*0.8;
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+
+// ========================
+// SCROLL REVEAL
+// ========================
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+},{threshold:0.12});
+reveals.forEach(r=>obs.observe(r));
+
+// ========================
+// DYNAMIC PRODUCTS
+// ========================
+const catIcons = {
+  'شواحن':'⚡','باور بانك':'🔋','كابلات':'🔌',
+  'سماعات':'🎧','كفرات':'🛡️','حوامل':'📱','أخرى':'📦'
+};
+
+const catLines = {
+  'شواحن':'TRUZO CHARGE','باور بانك':'TRUZO POWER','كابلات':'TRUZO LINK',
+  'سماعات':'TRUZO SOUND','كفرات':'TRUZO GUARD','حوامل':'TRUZO GRIP','أخرى':'TRUZO'
+};
+
+let activeFilter = 'الكل';
+
+function loadProducts() {
+  return JSON.parse(localStorage.getItem('truzo_products') || '[]');
+}
+
+function renderSiteProducts(filter = 'الكل') {
+  const products = loadProducts();
+  const grid = document.getElementById('dynamicProductsGrid');
+  const noState = document.getElementById('noProductsState');
+
+  if (!products.length) {
+    grid.style.display = 'none';
+    noState.style.display = 'block';
+    document.getElementById('filterBar').style.display = 'none';
+    return;
+  }
+
+  noState.style.display = 'none';
+  grid.style.display = 'grid';
+
+  // Build filter buttons
+  const cats = ['الكل', ...new Set(products.map(p => p.cat))];
+  const filterBar = document.getElementById('filterBar');
+  filterBar.innerHTML = cats.map(cat => `
+    <button onclick="filterProducts('${cat}')" id="filter-${cat}"
+      style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;
+      padding:8px 16px;border-radius:20px;border:1px solid ${cat===activeFilter?'var(--g)':'rgba(124,252,138,0.15)'};
+      background:${cat===activeFilter?'rgba(124,252,138,0.08)':'transparent'};
+      color:${cat===activeFilter?'var(--g)':'var(--muted)'};cursor:pointer;
+      text-transform:uppercase;transition:all 0.2s;">
+      ${catIcons[cat]||''} ${cat}
+    </button>
+  `).join('');
+
+  // Filter
+  const filtered = filter === 'الكل' ? products : products.filter(p => p.cat === filter);
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="prod-card reveal" onclick="openProdModal('${p.id}')" style="cursor:pointer;">
+      <div class="prod-card-visual" style="position:relative;overflow:hidden;">
+        ${p.image
+          ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+          : `<div class="prod-icon-3d">${catIcons[p.cat]||'📦'}</div>`
+        }
+        <div class="prod-badge">${p.brand}</div>
+      </div>
+      <div class="prod-card-info">
+        <div class="prod-line">${catLines[p.cat]||'TRUZO'}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.desc||''}</div>
+        <div class="prod-brands">
+          ${(p.specs||[]).slice(0,3).map(s=>`<span class="brand-tag">${s}</span>`).join('')}
+        </div>
+        <div class="prod-footer">
+          <span class="prod-warranty">🛡️ ${p.warranty||'12M'}</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--g);">
+              ${p.price ? p.price.toLocaleString()+' ج' : ''}
+            </span>
+            <button class="prod-btn" onclick="event.stopPropagation();orderProduct('${p.id}')">اطلب</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Re-observe reveals
+  document.querySelectorAll('.prod-card.reveal').forEach(r => obs.observe(r));
+}
+
+function filterProducts(cat) {
+  activeFilter = cat;
+  renderSiteProducts(cat);
+}
+
+function openProdModal(id) {
+  const products = loadProducts();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+
+  const modal = document.getElementById('prodModal');
+  document.getElementById('prodModalContent').innerHTML = `
+    <button onclick="closeProdModal()" style="position:absolute;top:18px;right:18px;
+      background:rgba(124,252,138,0.08);border:1px solid var(--border);border-radius:8px;
+      width:34px;height:34px;color:var(--muted);font-size:16px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;">✕</button>
+
+    ${p.image ? `<img src="${p.image}" alt="${p.name}"
+      style="width:100%;height:220px;object-fit:cover;border-radius:14px;margin-bottom:20px;border:1px solid var(--border);">` : ''}
+
+    <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--g);margin-bottom:6px;">
+      ${catLines[p.cat]||'TRUZO'} · ${p.brand}
+    </div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;margin-bottom:10px;">${p.name}</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:18px;">${p.desc||''}</div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;">
+      ${(p.specs||[]).map(s=>`<span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;
+        color:var(--g);border:1px solid rgba(124,252,138,0.25);padding:4px 10px;border-radius:6px;
+        background:rgba(124,252,138,0.05);">${s}</span>`).join('')}
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;
+      border-top:1px solid var(--border);padding-top:18px;margin-top:4px;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--g);line-height:1;">
+          ${p.price ? p.price.toLocaleString()+' ج' : ''}
+        </div>
+        <div style="font-size:12px;color:var(--muted);">🛡️ ضمان ${p.warranty||'12 شهر'}</div>
+      </div>
+      <button onclick="orderProduct('${p.id}')"
+        style="background:var(--g);border:none;border-radius:10px;padding:14px 24px;
+        font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;
+        color:var(--black);cursor:pointer;font-weight:700;text-transform:uppercase;">
+        اطلب دلوقتي
+      </button>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProdModal() {
+  document.getElementById('prodModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function orderProduct(id) {
+  const products = loadProducts();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  if (p.whatsapp) {
+    const msg = encodeURIComponent(`مرحبا، عايز أطلب: ${p.name} — ${p.price ? p.price.toLocaleString()+' ج' : ''}`);
+    window.open(p.whatsapp + '?text=' + msg, '_blank');
+  } else {
+    alert('تواصل معنا على السوشيال ميديا للطلب 📱');
+  }
+}
+
+// Close modal on backdrop
+document.getElementById('prodModal').addEventListener('click', function(e) {
+  if (e.target === this) closeProdModal();
+});
+
+// Load products on page load
+renderSiteProducts();
+</script>
+</body>
+</html>
